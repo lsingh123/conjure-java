@@ -11,3 +11,5 @@ types:
       SafeExternalLongExample:
         fields:
           safeExternalLongValue: SafeExternalLong
+      SafeExternalAlias:
+        alias: SafeExternalLong

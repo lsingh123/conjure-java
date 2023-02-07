@@ -134,6 +134,23 @@ public final class ObjectGeneratorTests {
     }
 
     @Test
+    public void testThings() throws IOException {
+        ConjureDefinition conjure =
+                Conjure.parse(ImmutableList.of(new File("src/test/resources/example-external-type.yml")));
+        File src = Files.createDirectory(tempDir.toPath().resolve("src")).toFile();
+        new GenerationCoordinator(
+                        MoreExecutors.directExecutor(),
+                        ImmutableSet.of(new ObjectGenerator(Options.builder()
+                                .useImmutableBytes(true)
+                                .excludeEmptyOptionals(true)
+                                .jetbrainsContractAnnotations(true)
+                                .build())))
+                .emit(conjure, src);
+
+        System.out.println(compiledFileContent(tempDir, "src/com/palantir/product/SafeExternalAlias.java"));
+    }
+
+    @Test
     public void testConjureImports() throws IOException {
         ConjureDefinition conjure = Conjure.parse(ImmutableList.of(
                 new File("src/test/resources/example-conjure-imports.yml"),
