@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.types;
 
+import com.palantir.conjure.java.ConjureAnnotations;
 import com.palantir.conjure.java.Options;
 import com.palantir.conjure.java.lib.Bytes;
 import com.palantir.conjure.java.lib.SafeLong;
@@ -151,6 +152,7 @@ public final class DefaultClassNameVisitor implements ClassNameVisitor {
         String conjurePackage = externalType.getExternalReference().getPackage();
         ClassName typeName = ClassName.get(
                 conjurePackage, externalType.getExternalReference().getName());
+        typeName = typeName.annotated(ConjureAnnotations.safety(externalType.getSafety()));
         return typeName.isBoxedPrimitive() ? typeName.unbox() : typeName;
     }
 

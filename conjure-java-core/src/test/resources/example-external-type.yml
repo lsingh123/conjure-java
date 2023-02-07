@@ -1,0 +1,13 @@
+types:
+  imports:
+    SafeExternalLong:
+      base-type: safelong
+      external:
+        java: java.lang.Long
+      safety: safe
+  definitions:
+    default-package: com.palantir.product
+    objects:
+      SafeExternalLongExample:
+        fields:
+          safeExternalLongValue: SafeExternalLong

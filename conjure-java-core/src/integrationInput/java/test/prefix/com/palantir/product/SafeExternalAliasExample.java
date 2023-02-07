@@ -39,10 +39,6 @@ public final class SafeExternalAliasExample {
         return value.hashCode();
     }
 
-    public static SafeExternalAliasExample valueOf(String value) {
-        return of(SafeExternalLongAlias.valueOf(value));
-    }
-
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static SafeExternalAliasExample of(@Nonnull SafeExternalLongAlias value) {
         return new SafeExternalAliasExample(value);

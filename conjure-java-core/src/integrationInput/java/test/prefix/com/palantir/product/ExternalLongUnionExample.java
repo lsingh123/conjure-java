@@ -39,7 +39,7 @@ public final class ExternalLongUnionExample {
         return value;
     }
 
-    public static ExternalLongUnionExample safeLong(long value) {
+    public static ExternalLongUnionExample safeLong(@Safe Long value) {
         return new ExternalLongUnionExample(new SafeLongWrapper(value));
     }
 
@@ -85,7 +85,7 @@ public final class ExternalLongUnionExample {
     }
 
     public interface Visitor<T> {
-        T visitSafeLong(long value);
+        T visitSafeLong(@Safe Long value);
 
         T visitUnsafeLong(long value);
 
@@ -101,14 +101,14 @@ public final class ExternalLongUnionExample {
                     UnsafeLongStageVisitorBuilder<T>,
                     UnknownStageVisitorBuilder<T>,
                     Completed_StageVisitorBuilder<T> {
-        private Function<Long, T> safeLongVisitor;
+        private Function<@Safe Long, T> safeLongVisitor;
 
         private Function<Long, T> unsafeLongVisitor;
 
         private Function<String, T> unknownVisitor;
 
         @Override
-        public UnsafeLongStageVisitorBuilder<T> safeLong(@Nonnull Function<Long, T> safeLongVisitor) {
+        public UnsafeLongStageVisitorBuilder<T> safeLong(@Nonnull Function<@Safe Long, T> safeLongVisitor) {
             Preconditions.checkNotNull(safeLongVisitor, "safeLongVisitor cannot be null");
             this.safeLongVisitor = safeLongVisitor;
             return this;
@@ -140,12 +140,12 @@ public final class ExternalLongUnionExample {
 
         @Override
         public Visitor<T> build() {
-            final Function<Long, T> safeLongVisitor = this.safeLongVisitor;
+            final Function<@Safe Long, T> safeLongVisitor = this.safeLongVisitor;
             final Function<Long, T> unsafeLongVisitor = this.unsafeLongVisitor;
             final Function<String, T> unknownVisitor = this.unknownVisitor;
             return new Visitor<T>() {
                 @Override
-                public T visitSafeLong(long value) {
+                public T visitSafeLong(@Safe Long value) {
                     return safeLongVisitor.apply(value);
                 }
 
@@ -163,7 +163,7 @@ public final class ExternalLongUnionExample {
     }
 
     public interface SafeLongStageVisitorBuilder<T> {
-        UnsafeLongStageVisitorBuilder<T> safeLong(@Nonnull Function<Long, T> safeLongVisitor);
+        UnsafeLongStageVisitorBuilder<T> safeLong(@Nonnull Function<@Safe Long, T> safeLongVisitor);
     }
 
     public interface UnsafeLongStageVisitorBuilder<T> {
@@ -194,10 +194,10 @@ public final class ExternalLongUnionExample {
 
     @JsonTypeName("safeLong")
     private static final class SafeLongWrapper implements Base {
-        private final long value;
+        private final @Safe Long value;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-        private SafeLongWrapper(@JsonSetter("safeLong") @Nonnull long value) {
+        private SafeLongWrapper(@JsonSetter("safeLong") @Nonnull @Safe Long value) {
             Preconditions.checkNotNull(value, "safeLong cannot be null");
             this.value = value;
         }
@@ -208,7 +208,7 @@ public final class ExternalLongUnionExample {
         }
 
         @JsonProperty("safeLong")
-        private long getValue() {
+        private @Safe Long getValue() {
             return value;
         }
 
@@ -223,12 +223,12 @@ public final class ExternalLongUnionExample {
         }
 
         private boolean equalTo(SafeLongWrapper other) {
-            return this.value == other.value;
+            return this.value.equals(other.value);
         }
 
         @Override
         public int hashCode() {
-            return Long.hashCode(this.value);
+            return this.value.hashCode();
         }
 
         @Override
