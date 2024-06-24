@@ -10,6 +10,7 @@ import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.processing.Generated;
 
@@ -17,14 +18,15 @@ import javax.annotation.processing.Generated;
 @JsonDeserialize(builder = SafeExternalLongExample.Builder.class)
 @Generated("com.palantir.conjure.java.types.BeanGenerator")
 public final class SafeExternalLongExample {
-    private final long safeExternalLongValue;
+    private final @Safe Long safeExternalLongValue;
 
-    private SafeExternalLongExample(long safeExternalLongValue) {
+    private SafeExternalLongExample(@Safe Long safeExternalLongValue) {
+        validateFields(safeExternalLongValue);
         this.safeExternalLongValue = safeExternalLongValue;
     }
 
     @JsonProperty("safeExternalLongValue")
-    public long getSafeExternalLongValue() {
+    public @Safe Long getSafeExternalLongValue() {
         return this.safeExternalLongValue;
     }
 
@@ -34,12 +36,12 @@ public final class SafeExternalLongExample {
     }
 
     private boolean equalTo(SafeExternalLongExample other) {
-        return this.safeExternalLongValue == other.safeExternalLongValue;
+        return this.safeExternalLongValue.equals(other.safeExternalLongValue);
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(this.safeExternalLongValue);
+        return this.safeExternalLongValue.hashCode();
     }
 
     @Override
@@ -48,8 +50,28 @@ public final class SafeExternalLongExample {
         return "SafeExternalLongExample{safeExternalLongValue: " + safeExternalLongValue + '}';
     }
 
-    public static SafeExternalLongExample of(long safeExternalLongValue) {
+    public static SafeExternalLongExample of(@Safe Long safeExternalLongValue) {
         return builder().safeExternalLongValue(safeExternalLongValue).build();
+    }
+
+    private static void validateFields(@Safe Long safeExternalLongValue) {
+        List<String> missingFields = null;
+        missingFields = addFieldIfMissing(missingFields, safeExternalLongValue, "safeExternalLongValue");
+        if (missingFields != null) {
+            throw new SafeIllegalArgumentException(
+                    "Some required fields have not been set", SafeArg.of("missingFields", missingFields));
+        }
+    }
+
+    private static List<String> addFieldIfMissing(List<String> prev, Object fieldValue, String fieldName) {
+        List<String> missingFields = prev;
+        if (fieldValue == null) {
+            if (missingFields == null) {
+                missingFields = new ArrayList<>(1);
+            }
+            missingFields.add(fieldName);
+        }
+        return missingFields;
     }
 
     public static Builder builder() {
@@ -61,9 +83,7 @@ public final class SafeExternalLongExample {
     public static final class Builder {
         boolean _buildInvoked;
 
-        private long safeExternalLongValue;
-
-        private boolean _safeExternalLongValueInitialized = false;
+        private @Safe Long safeExternalLongValue;
 
         private Builder() {}
 
@@ -74,38 +94,16 @@ public final class SafeExternalLongExample {
         }
 
         @JsonSetter("safeExternalLongValue")
-        public Builder safeExternalLongValue(long safeExternalLongValue) {
+        public Builder safeExternalLongValue(@Nonnull @Safe Long safeExternalLongValue) {
             checkNotBuilt();
-            this.safeExternalLongValue = safeExternalLongValue;
-            this._safeExternalLongValueInitialized = true;
+            this.safeExternalLongValue =
+                    Preconditions.checkNotNull(safeExternalLongValue, "safeExternalLongValue cannot be null");
             return this;
-        }
-
-        private void validatePrimitiveFieldsHaveBeenInitialized() {
-            List<String> missingFields = null;
-            missingFields =
-                    addFieldIfMissing(missingFields, _safeExternalLongValueInitialized, "safeExternalLongValue");
-            if (missingFields != null) {
-                throw new SafeIllegalArgumentException(
-                        "Some required fields have not been set", SafeArg.of("missingFields", missingFields));
-            }
-        }
-
-        private static List<String> addFieldIfMissing(List<String> prev, boolean initialized, String fieldName) {
-            List<String> missingFields = prev;
-            if (!initialized) {
-                if (missingFields == null) {
-                    missingFields = new ArrayList<>(1);
-                }
-                missingFields.add(fieldName);
-            }
-            return missingFields;
         }
 
         public SafeExternalLongExample build() {
             checkNotBuilt();
             this._buildInvoked = true;
-            validatePrimitiveFieldsHaveBeenInitialized();
             return new SafeExternalLongExample(safeExternalLongValue);
         }
 

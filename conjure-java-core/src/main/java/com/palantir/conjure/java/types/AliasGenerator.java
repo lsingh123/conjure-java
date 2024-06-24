@@ -65,8 +65,8 @@ public final class AliasGenerator {
             TypeMapper typeMapper, SafetyEvaluator safetyEvaluator, AliasDefinition typeDef, Options options) {
         com.palantir.conjure.spec.TypeName prefixedTypeName =
                 Packages.getPrefixedName(typeDef.getTypeName(), options.packagePrefix());
-        TypeName aliasTypeName =
-                ConjureAnnotations.withSafety(typeMapper.getClassName(typeDef.getAlias()), typeDef.getSafety());
+        TypeName intermediate = typeMapper.getClassName(typeDef.getAlias());
+        TypeName aliasTypeName = ConjureAnnotations.withSafety(intermediate, typeDef.getSafety());
 
         ClassName thisClass = ClassName.get(prefixedTypeName.getPackage(), prefixedTypeName.getName());
         Optional<LogSafety> safety = typeDef.getSafety();
@@ -107,7 +107,7 @@ public final class AliasGenerator {
                         .addModifiers(Modifier.PUBLIC)
                         .addAnnotation(Override.class)
                         .returns(TypeName.INT)
-                        .addCode(primitiveSafeHashCode(aliasTypeName))
+                        .addCode(primitiveSafeHashCode(aliasTypeName.withoutAnnotations()))
                         .build());
 
         typeDef.getAlias().accept(new ComparableVisitor(thisClass)).ifPresent(compareTo -> spec.addSuperinterface(
@@ -340,6 +340,7 @@ public final class AliasGenerator {
         } else if (conjureType.accept(MoreVisitors.IS_EXTERNAL)) {
             ExternalReference reference = conjureType.accept(MoreVisitors.EXTERNAL);
             // Only generate valueOf methods for external type imports if the fallback type is valid
+            // TypeName type = TypeVariableName.get(aliasTypeName.toString());
             if (valueOfFactoryMethod(
                                     reference.getFallback(),
                                     typeMapper.getClassName(reference.getFallback()),
